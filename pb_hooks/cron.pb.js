@@ -7,11 +7,11 @@ cronAdd("cleanup_unverified_users", "@daily", () => {
 
 // if the start date's month is last last month
 cronAdd("cleanup_attendence", "@monthly", () => {
-    // a date that is the 1st day of 2 months ago
-    const date = new Date();
-    date.setMonth(date.getMonth() - 2);
-    date.setDate(1);
-    $app.db().newQuery(`DELETE FROM attendance WHERE id < ${date.getTime()}`).execute();
+    const start_of_last_month = Math.floor(Date.now() / 86400000) * 86400000;
+    $app.db().newQuery(`
+        DELETE FROM attendance WHERE id < ${start_of_last_month};
+        DELETE FROM leave WHERE id < ${start_of_last_month};
+    `).execute();
 })
 
 // 7 day old

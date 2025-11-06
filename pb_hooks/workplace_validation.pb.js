@@ -4,10 +4,11 @@ onRecordValidate((e) => {
     if (employees_changed) {
         // now we get_or_create employees
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const emails = e.record.get('employees').filter(email => emailRegex.test(email));
-        const emailStr = emails.join('", "');
+        const emails = e.record.get('employees').map(e => e.email).filter(email => emailRegex.test(email));
         const existingUsers = arrayOf(new DynamicModel({"email": ""}));
-        $app.db().newQuery(`SELECT email FROM users WHERE email IN ("${emailStr}")`).all(existingUsers);
+        $app.db().newQuery(`
+            SELECT email FROM users WHERE email IN ("${emails.join('", "')}")
+        `).all(existingUsers);
         const userCollection = $app.findCollectionByNameOrId("users");
         emails.forEach(email => {
             if (existingUsers.find(user => user.email === email)) 

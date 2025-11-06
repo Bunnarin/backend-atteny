@@ -748,6 +748,16 @@ migrate((app) => {
           "required": false,
           "system": false,
           "type": "text"
+        },
+        {
+          "hidden": false,
+          "id": "json3614621610",
+          "maxSize": 0,
+          "name": "user_data",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "json"
         }
       ],
       "fileToken": {
@@ -921,6 +931,16 @@ migrate((app) => {
           "required": false,
           "system": false,
           "type": "relation"
+        },
+        {
+          "hidden": false,
+          "id": "json166964271",
+          "maxSize": 0,
+          "name": "payroll_setting",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "json"
         }
       ],
       "id": "pbc_3033560182",
@@ -1119,13 +1139,13 @@ migrate((app) => {
       "deleteRule": null,
       "fields": [
         {
-          "autogeneratePattern": "[a-z0-9]{15}",
+          "autogeneratePattern": "",
           "hidden": false,
           "id": "text3208210256",
-          "max": 15,
-          "min": 15,
+          "max": 0,
+          "min": 0,
           "name": "id",
-          "pattern": "^[a-z0-9]+$",
+          "pattern": "$",
           "presentable": false,
           "primaryKey": true,
           "required": true,
@@ -1159,46 +1179,28 @@ migrate((app) => {
           "type": "relation"
         },
         {
-          "autogeneratePattern": "",
           "hidden": false,
-          "id": "text1096160257",
-          "max": 0,
+          "id": "number2752330789",
+          "max": 1440,
           "min": 0,
-          "name": "end_time",
-          "pattern": "",
+          "name": "start_minute",
+          "onlyInt": true,
           "presentable": false,
-          "primaryKey": false,
           "required": false,
           "system": false,
-          "type": "text"
+          "type": "number"
         },
         {
-          "autogeneratePattern": "",
           "hidden": false,
-          "id": "text1345189255",
-          "max": 0,
+          "id": "number517587069",
+          "max": 1440,
           "min": 0,
-          "name": "start_time",
-          "pattern": "",
+          "name": "end_minute",
+          "onlyInt": true,
           "presentable": false,
-          "primaryKey": false,
           "required": false,
           "system": false,
-          "type": "text"
-        },
-        {
-          "autogeneratePattern": "",
-          "hidden": false,
-          "id": "text2862495610",
-          "max": 0,
-          "min": 0,
-          "name": "date",
-          "pattern": "",
-          "presentable": false,
-          "primaryKey": false,
-          "required": true,
-          "system": false,
-          "type": "text"
+          "type": "number"
         }
       ],
       "id": "pbc_473016918",
@@ -1212,7 +1214,7 @@ migrate((app) => {
     },
     {
       "createRule": null,
-      "deleteRule": null,
+      "deleteRule": "@request.auth.id = user",
       "fields": [
         {
           "autogeneratePattern": "",
@@ -1258,12 +1260,101 @@ migrate((app) => {
       ],
       "id": "pbc_1605611094",
       "indexes": [],
-      "listRule": null,
+      "listRule": "@request.auth.id = user",
       "name": "telegram_notification",
       "system": false,
       "type": "base",
       "updateRule": null,
-      "viewRule": null
+      "viewRule": "@request.auth.id = user"
+    },
+    {
+      "createRule": "(@request.auth.id = workplace.employer && approved = true) || (@request.auth.id = requester && approved = false)",
+      "deleteRule": "@request.auth.id = workplace.employer || (@request.auth.id = requester && approved = false)",
+      "fields": [
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
+          "id": "text3208210256",
+          "max": 0,
+          "min": 0,
+          "name": "id",
+          "pattern": "$",
+          "presentable": false,
+          "primaryKey": true,
+          "required": true,
+          "system": true,
+          "type": "text"
+        },
+        {
+          "hidden": false,
+          "id": "bool2086131741",
+          "name": "approved",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "bool"
+        },
+        {
+          "cascadeDelete": true,
+          "collectionId": "_pb_users_auth_",
+          "hidden": false,
+          "id": "relation1820765950",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "requester",
+          "presentable": false,
+          "required": true,
+          "system": false,
+          "type": "relation"
+        },
+        {
+          "hidden": false,
+          "id": "number2220669758",
+          "max": null,
+          "min": null,
+          "name": "end_date",
+          "onlyInt": false,
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "number"
+        },
+        {
+          "cascadeDelete": false,
+          "collectionId": "pbc_3033560182",
+          "hidden": false,
+          "id": "relation3506148078",
+          "maxSelect": 1,
+          "minSelect": 0,
+          "name": "workplace",
+          "presentable": false,
+          "required": true,
+          "system": false,
+          "type": "relation"
+        },
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
+          "id": "text2490651244",
+          "max": 0,
+          "min": 0,
+          "name": "comment",
+          "pattern": "",
+          "presentable": false,
+          "primaryKey": false,
+          "required": false,
+          "system": false,
+          "type": "text"
+        }
+      ],
+      "id": "pbc_1358315067",
+      "indexes": [],
+      "listRule": "@request.auth.id = workplace.employer || @request.auth.id = requester",
+      "name": "leave",
+      "system": false,
+      "type": "base",
+      "updateRule": "(@request.auth.id = workplace.employer && approved = true) || (@request.auth.id = requester && approved = false)",
+      "viewRule": "@request.auth.id = workplace.employer || @request.auth.id = requester"
     }
   ];
 

@@ -6,21 +6,54 @@ routerAdd("POST", "/set-device-id", (e) => {
 }, $apis.requireAuth())
 
 routerAdd("POST", "/clockin/{id}", (e) => {
-    const { date, time } = e.requestInfo().body;
-    $app.db().newQuery(`
-        INSERT INTO attendance (workplace, user, date, start_time)
-        VALUES ({:workplace}, '${e.auth.get('id')}', {:date}, {:time})
-    `).bind({ workplace: e.request.pathValue("id"), date, time}).execute();
+    let record = new Record($app.findCollectionByNameOrId("attendance"));
+    record.set("id", Date.now());
+    record.set("workplace", e.request.pathValue("id"));
+    record.set("user", e.auth.get('id'));
+    record.set("start_minute", Date.now() / 60000);
+    $app.save(record);
     return e.json(200);
 }, $apis.requireAuth())
 
 routerAdd("POST", "/clockout/{id}", (e) => {
-    const { date, time } = e.requestInfo().body;
-    // wip: update or create
-    $app.db().newQuery(`
-        UPDATE attendance SET end_time = {:time}
-        WHERE workplace = {:workplace} AND user = '${e.auth.get('id')}' AND date = {:date} AND end_time IS NULL
-    `).bind({ workplace: e.request.pathValue("id"), date, time }).execute();
+    const end_minute = Date.now() / 60000;
+
+    // first we determine wheter its same day or not
+    const start_of_today = Math.floor(Date.now() / 60000) * 60000;
+    let totalSameDayAttendances = $app.findAllRecords(
+        "attendance", 
+        $dbx.exp(`id >= ${start_of_today}`),
+        $dbx.exp(`start_minute <= ${end_minute}`),
+        $dbx.hashExp({
+            workplace: e.request.pathValue("id"),
+            user: e.auth.get('id'),
+            end_minute: 0,
+        })
+    );
+    if (totalSameDayAttendances.length > 0) {
+        const record = totalSameDayAttendances[0];
+        record.set('end_minute', end_minute);
+        $app.save(record);
+        return e.json(200);
+    } 
+
+    // now try to find yesterday insstead (night shift)
+    const start_of_ytd = Math.floor(Date.now() / 86400000) * 86400000;
+    let totalYesterdayAttendances = $app.findAllRecords(
+        "attendance", 
+        $dbx.exp(`id >= ${start_of_ytd}`),
+        $dbx.hashExp({
+            workplace: e.request.pathValue("id"),
+            user: e.auth.get('id'),
+            end_minute: 0,
+        })
+    );
+    if (totalYesterdayAttendances.length > 0) {
+        const record = totalYesterdayAttendances[0];
+        record.set('end_minute', end_minute);
+        $app.save(record);
+    }
+
     return e.json(200);
 }, $apis.requireAuth())
 
@@ -36,7 +69,7 @@ routerAdd("POST", "/subscribe/{id}", (e) => {
     // add the user to the workplace
     workplace.set('employees+', e.auth.get('id'));
     // the workplace onValidate will enforce the max_employee limit
-    $app.save(workplace);
+    $app.saveNoValidate(workplace);
     return e.json(200);
 }, $apis.requireAuth())
 
@@ -46,8 +79,9 @@ routerAdd("POST", "/set-nickname", (e) => {
     // Im too fking lazy to update in batch
     employees.forEach(({email, nickname}) => 
         $app.db().newQuery(`
-            UPDATE users SET nickname = {:nickname} WHERE email = {:email}
-        `).bind({ nickname, email }).execute());
+            UPDATE users SET nickname = {:nickname} WHERE id = {:email}
+        `).bind({ nickname, email }).execute()
+    );
     
     return e.json(200)
 }, $apis.requireAuth())
