@@ -1,16 +1,17 @@
 // cleanup unverified user so that we don't have any non-belonging user (in case user mispelled email)
 // we don't need to check if they belong in any workplace (since it's stored in a json array anw)
 // if we did delete any user that is in a workplace, the next time the employer save the workplace, it will be recreated anw
-cronAdd("cleanup_unverified_users", "@daily", () => {
-    $app.db().newQuery(`DELETE FROM users WHERE verified = false`).execute();
-})
+cronAdd("cleanup_unverified_users", "@daily", () => 
+    $app.db().newQuery(`DELETE FROM users WHERE verified = false`).execute()
+)
 
 // if the start date's month is last last month
 cronAdd("cleanup_attendence", "@monthly", () => {
-    const start_of_last_month = Math.floor(Date.now() / 86400000) * 86400000;
+    const start_of_last_month = new Date();
+    start_of_last_month.setMonth(start_of_last_month.getMonth() - 1, 1);
     $app.db().newQuery(`
-        DELETE FROM attendance WHERE id < ${start_of_last_month};
-        DELETE FROM leave WHERE id < ${start_of_last_month};
+        DELETE FROM attendance WHERE id < ${start_of_last_month.getTime()};
+        DELETE FROM leave WHERE id < ${start_of_last_month.getTime()};
     `).execute();
 })
 

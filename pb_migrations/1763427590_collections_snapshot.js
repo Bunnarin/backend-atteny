@@ -903,7 +903,7 @@ migrate((app) => {
           "hidden": false,
           "id": "json1188605132",
           "maxSize": 0,
-          "name": "option",
+          "name": "dashboard",
           "presentable": false,
           "required": false,
           "system": false,
@@ -920,23 +920,20 @@ migrate((app) => {
           "type": "json"
         },
         {
-          "cascadeDelete": false,
-          "collectionId": "pbc_1605611094",
-          "hidden": false,
-          "id": "relation3641692826",
-          "maxSelect": 999,
-          "minSelect": 0,
-          "name": "telegram_notifications",
-          "presentable": false,
-          "required": false,
-          "system": false,
-          "type": "relation"
-        },
-        {
           "hidden": false,
           "id": "json166964271",
           "maxSize": 0,
           "name": "payroll_setting",
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "json"
+        },
+        {
+          "hidden": false,
+          "id": "json488468783",
+          "maxSize": 0,
+          "name": "shifts",
           "presentable": false,
           "required": false,
           "system": false,
@@ -973,7 +970,7 @@ migrate((app) => {
           "type": "text"
         },
         {
-          "cascadeDelete": false,
+          "cascadeDelete": true,
           "collectionId": "_pb_users_auth_",
           "hidden": false,
           "id": "relation2375276105",
@@ -981,7 +978,7 @@ migrate((app) => {
           "minSelect": 0,
           "name": "user",
           "presentable": false,
-          "required": false,
+          "required": true,
           "system": false,
           "type": "relation"
         },
@@ -1027,20 +1024,6 @@ migrate((app) => {
         {
           "autogeneratePattern": "",
           "hidden": false,
-          "id": "text2363381545",
-          "max": 0,
-          "min": 0,
-          "name": "type",
-          "pattern": "",
-          "presentable": false,
-          "primaryKey": false,
-          "required": true,
-          "system": false,
-          "type": "text"
-        },
-        {
-          "autogeneratePattern": "",
-          "hidden": false,
           "id": "text812977739",
           "max": 0,
           "min": 0,
@@ -1053,18 +1036,7 @@ migrate((app) => {
           "type": "text"
         },
         {
-          "hidden": false,
-          "id": "date4098502798",
-          "max": "",
-          "min": "",
-          "name": "expiration_date",
-          "presentable": false,
-          "required": true,
-          "system": false,
-          "type": "date"
-        },
-        {
-          "cascadeDelete": false,
+          "cascadeDelete": true,
           "collectionId": "_pb_users_auth_",
           "hidden": false,
           "id": "relation2375276105",
@@ -1084,6 +1056,32 @@ migrate((app) => {
           "required": false,
           "system": false,
           "type": "bool"
+        },
+        {
+          "hidden": false,
+          "id": "number4098502798",
+          "max": null,
+          "min": null,
+          "name": "expiration_date",
+          "onlyInt": false,
+          "presentable": false,
+          "required": false,
+          "system": false,
+          "type": "number"
+        },
+        {
+          "autogeneratePattern": "",
+          "hidden": false,
+          "id": "text2363381545",
+          "max": 0,
+          "min": 0,
+          "name": "type",
+          "pattern": "",
+          "presentable": false,
+          "primaryKey": false,
+          "required": false,
+          "system": false,
+          "type": "text"
         }
       ],
       "id": "pbc_1552602209",
@@ -1135,7 +1133,7 @@ migrate((app) => {
       "viewRule": "@request.auth.id = id"
     },
     {
-      "createRule": null,
+      "createRule": "@request.auth.id = workplace.employer || @request.auth.id = user",
       "deleteRule": null,
       "fields": [
         {
@@ -1153,7 +1151,7 @@ migrate((app) => {
           "type": "text"
         },
         {
-          "cascadeDelete": false,
+          "cascadeDelete": true,
           "collectionId": "_pb_users_auth_",
           "hidden": false,
           "id": "relation2375276105",
@@ -1166,7 +1164,7 @@ migrate((app) => {
           "type": "relation"
         },
         {
-          "cascadeDelete": false,
+          "cascadeDelete": true,
           "collectionId": "pbc_3033560182",
           "hidden": false,
           "id": "relation3506148078",
@@ -1181,8 +1179,8 @@ migrate((app) => {
         {
           "hidden": false,
           "id": "number2752330789",
-          "max": 1440,
-          "min": 0,
+          "max": 288,
+          "min": -1,
           "name": "start_minute",
           "onlyInt": true,
           "presentable": false,
@@ -1193,8 +1191,8 @@ migrate((app) => {
         {
           "hidden": false,
           "id": "number517587069",
-          "max": 1440,
-          "min": 0,
+          "max": 288,
+          "min": -1,
           "name": "end_minute",
           "onlyInt": true,
           "presentable": false,
@@ -1209,63 +1207,8 @@ migrate((app) => {
       "name": "attendance",
       "system": false,
       "type": "base",
-      "updateRule": null,
-      "viewRule": null
-    },
-    {
-      "createRule": null,
-      "deleteRule": "@request.auth.id = user",
-      "fields": [
-        {
-          "autogeneratePattern": "",
-          "hidden": false,
-          "id": "text3208210256",
-          "max": 0,
-          "min": 0,
-          "name": "id",
-          "pattern": "$",
-          "presentable": false,
-          "primaryKey": true,
-          "required": true,
-          "system": true,
-          "type": "text"
-        },
-        {
-          "cascadeDelete": false,
-          "collectionId": "_pb_users_auth_",
-          "hidden": false,
-          "id": "relation2375276105",
-          "maxSelect": 1,
-          "minSelect": 0,
-          "name": "user",
-          "presentable": false,
-          "required": true,
-          "system": false,
-          "type": "relation"
-        },
-        {
-          "autogeneratePattern": "",
-          "hidden": false,
-          "id": "text1579384326",
-          "max": 0,
-          "min": 0,
-          "name": "name",
-          "pattern": "",
-          "presentable": false,
-          "primaryKey": false,
-          "required": false,
-          "system": false,
-          "type": "text"
-        }
-      ],
-      "id": "pbc_1605611094",
-      "indexes": [],
-      "listRule": "@request.auth.id = user",
-      "name": "telegram_notification",
-      "system": false,
-      "type": "base",
-      "updateRule": null,
-      "viewRule": "@request.auth.id = user"
+      "updateRule": "@request.auth.id = workplace.employer || @request.auth.id = user",
+      "viewRule": "@request.auth.id = workplace.employer || @request.auth.id = user"
     },
     {
       "createRule": "(@request.auth.id = workplace.employer && approved = true) || (@request.auth.id = requester && approved = false)",
@@ -1312,8 +1255,8 @@ migrate((app) => {
           "id": "number2220669758",
           "max": null,
           "min": null,
-          "name": "end_date",
-          "onlyInt": false,
+          "name": "duration",
+          "onlyInt": true,
           "presentable": false,
           "required": false,
           "system": false,

@@ -1,13 +1,3 @@
-onRecordAuthWithOAuth2Request((e) => {
-    //collect the refreshtoken if the frontend prompts for it
-    if (e.oAuth2User.refreshToken) {
-        e.record.set('refresh_token', e.oAuth2User.refreshToken);
-        $app.saveNoValidate(e.record);
-    }
-
-    e.next();
-})
-
 // default values
 onRecordCreate((e) => {
     e.record.set('id', e.record.get('email'))
