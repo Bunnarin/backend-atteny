@@ -31,7 +31,7 @@ cronAdd("create_debt_rm_employee", "@daily", () => {
     $app.db().newQuery(`
         UPDATE users u
         JOIN total_employees te ON u.id = te.id
-        SET u.debt = (te.value - u.max_employees) * ${config.RENT_PRICE()}
+        SET u.debt = te.value * ${config.RENT_PRICE()}
         WHERE u.debt = 0 AND (${thisMonth} + 12 - u.last_paid) % 12 > 0
         RETURN u.email, u.debt
     `).all(users);

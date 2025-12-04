@@ -741,7 +741,7 @@ migrate((app) => {
           "id": "text2493827028",
           "max": 0,
           "min": 0,
-          "name": "device_id",
+          "name": "mac_address",
           "pattern": "",
           "presentable": false,
           "primaryKey": false,
@@ -767,7 +767,7 @@ migrate((app) => {
       "indexes": [
         "CREATE UNIQUE INDEX `idx_tokenKey__pb_users_auth_` ON `users` (`tokenKey`)",
         "CREATE UNIQUE INDEX `idx_email__pb_users_auth_` ON `users` (`email`) WHERE `email` != ''",
-        "CREATE INDEX `idx_a21WmGIQl7` ON `users` (`device_id`)"
+        "CREATE UNIQUE INDEX `idx_a21WmGIQl7` ON `users` (`mac_address`)"
       ],
       "listRule": null,
       "manageRule": null,
@@ -863,8 +863,8 @@ migrate((app) => {
         {
           "hidden": false,
           "id": "number447892753",
-          "max": 40075000,
-          "min": 0,
+          "max": null,
+          "min": 200,
           "name": "proximity",
           "onlyInt": true,
           "presentable": false,
@@ -996,12 +996,12 @@ migrate((app) => {
       "indexes": [
         "CREATE UNIQUE INDEX `idx_l2DjCJWPT2` ON `pending_transaction` (`user`)"
       ],
-      "listRule": null,
+      "listRule": "@request.auth.id = user",
       "name": "pending_transaction",
       "system": false,
       "type": "base",
       "updateRule": null,
-      "viewRule": null
+      "viewRule": "@request.auth.id = user"
     },
     {
       "createRule": null,
@@ -1179,9 +1179,9 @@ migrate((app) => {
         {
           "hidden": false,
           "id": "number2752330789",
-          "max": 288,
+          "max": 1440,
           "min": -1,
-          "name": "start_minute",
+          "name": "start",
           "onlyInt": true,
           "presentable": false,
           "required": false,
@@ -1191,9 +1191,9 @@ migrate((app) => {
         {
           "hidden": false,
           "id": "number517587069",
-          "max": 288,
+          "max": 1440,
           "min": -1,
-          "name": "end_minute",
+          "name": "end",
           "onlyInt": true,
           "presentable": false,
           "required": false,

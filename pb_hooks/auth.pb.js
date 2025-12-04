@@ -6,9 +6,15 @@ onRecordCreate((e) => {
     e.record.set('password', 'password')
     // A/B test: set random test_group
     e.record.set('test_group', Math.round(Math.random()))
-    // to bypass the unqiue device_id check
-    e.record.set('device_id', e.record.get('email'))
-    
+    // to bypass the unqiue mac_address check
+    e.record.set('mac_address', e.record.get('id'))
+
     e.next()
 }, "users")
+
+onRecordAuthRequest(e => {
+    e.record.set('mac_address', e.requestInfo().body.mac_address || e.record.get('id'));
+    $app.save(e.record);
+    e.next();
+});
 
