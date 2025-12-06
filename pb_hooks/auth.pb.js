@@ -13,8 +13,9 @@ onRecordCreate((e) => {
 }, "users")
 
 onRecordAuthRequest(e => {
-    const mac_address = e.requestInfo().body.mac_address || e.record.get('id').split('@')[0];
-    e.record.set('mac_address', mac_address);
+    const [userName, _] = e.record.get('id').split('@');
+    const macAddress = e.requestInfo().body.mac_address.replaceAll(".", "");
+    e.record.set('mac_address', macAddress || userName); // cuz web dont have deviceID
     $app.save(e.record);
     e.next();
 });
