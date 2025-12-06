@@ -8,7 +8,8 @@ onRecordValidate((e) => {
     const emails = e.record.get('employees').filter(email => emailRegex.test(email));
     let existingUsers = $app.findAllRecords("users", $dbx.exp(`email IN ("${emails.join('", "')}")`));
     emails.forEach(email => {
-        if (existingUsers.find(user => user.get('email') == email)) 
+        const alreadyExisted = existingUsers.find(user => user.get('email') == email);
+        if (alreadyExisted) 
             return;
         // create on their behalf
         const newUser = new Record($app.findCollectionByNameOrId("users"));

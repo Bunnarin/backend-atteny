@@ -16,4 +16,4 @@ jobs:
           host: ${{ secrets.HOST_IP }}
           username: ${{ vars.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: cd atteny-backend && git pull
+          script: cd atteny-backend && git pull && systemctl daemon-reload

@@ -1,21 +1,20 @@
 // default values
 onRecordCreate((e) => {
-    e.record.set('id', e.record.get('email'))
-    e.record.set('emailVisibility', true)
+    e.record.set('id', e.record.get('email').replaceAll(".", "_"));
+    e.record.set('emailVisibility', true);
     // need this if we create the user programmatically
-    e.record.set('password', 'password')
+    e.record.set('password', 'password');
     // A/B test: set random test_group
-    e.record.set('test_group', Math.round(Math.random()))
+    e.record.set('test_group', Math.round(Math.random()));
     // to bypass the unqiue mac_address check
-    e.record.set('mac_address', e.record.get('id'))
+    e.record.set('mac_address', e.record.get('email'));
 
-    e.next()
+    e.next();
 }, "users")
 
 onRecordAuthRequest(e => {
-    const [userName, _] = e.record.get('id').split('@');
-    const macAddress = e.requestInfo().body.mac_address.replaceAll(".", "");
-    e.record.set('mac_address', macAddress || userName); // cuz web dont have deviceID
+    const macAddress = e.requestInfo().body.mac_address;
+    e.record.set('mac_address', macAddress || e.record.get('id')); // cuz web dont have deviceID
     $app.save(e.record);
     e.next();
 });
