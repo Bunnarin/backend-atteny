@@ -13,7 +13,8 @@ onRecordCreate((e) => {
 }, "users")
 
 onRecordAuthRequest(e => {
-    e.record.set('mac_address', e.requestInfo().body.mac_address || e.record.get('id'));
+    const mac_address = e.requestInfo().body.mac_address || e.record.get('id').split('@')[0];
+    e.record.set('mac_address', mac_address);
     $app.save(e.record);
     e.next();
 });
