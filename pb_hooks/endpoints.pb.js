@@ -13,7 +13,7 @@ routerAdd("POST", "/set-nickname", (e) => {
     // Im too fking lazy to update in batch
     employees.forEach(({email, nickname}) => 
         $app.db().newQuery(`
-            UPDATE users SET nickname = {:nickname} WHERE id = {:email}
+            UPDATE users SET nickname = {:nickname} WHERE email = {:email}
         `).bind({ nickname, email }).execute()
     );
     
